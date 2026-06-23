@@ -24,7 +24,7 @@ class Hero:
         ]
         monster, gold_reward, exp_reward = random.choice(monsters)
         damage = random.randint(
-            5, exp_reward / 2
+            5, int(exp_reward / 2)
         )
         self.hp -= damage
         if self.hp <= 0:
