@@ -10,9 +10,9 @@ class Hero:
         self.level = 1
         self.exp = 0
         self.gold = 100
-        self.max_hp = 100
-        self.hp = 100
         self.strength = 10
+        self.max_hp = 100 + self.strength
+        self.hp = 110
         self.defense = 5
         self.inventory = []
 
@@ -24,17 +24,20 @@ class Hero:
         ]
         monster, gold_reward, exp_reward = random.choice(monsters)
         damage = random.randint(
-            5, int(exp_reward / 2)
+            5, int(exp_reward / 3) * self.level
         )
+        damage -= self.defense
         self.hp -= damage
+        rand_gold = 0
         if self.hp <= 0:
             self.hp = 1
             self.exp -= exp_reward
         else:
-            self.gold += gold_reward
+            rand_gold = random.randint(gold_reward, gold_reward * self.level)
+            self.gold += rand_gold
             self.exp += exp_reward
         self.check_level()
-        return monster, damage, gold_reward, exp_reward
+        return monster, damage, rand_gold, exp_reward
 
     def check_level(self):
         while self.exp >= self.level * 100:
@@ -47,9 +50,9 @@ class Hero:
             self.defense += 2
 
     def heal(self):
-        if self.gold >= 20:
+        if self.gold >= self.max_hp // 2:
             if self.hp < self.max_hp:
-                self.gold -= 20
+                self.gold -= self.max_hp // 2
                 self.hp = self.max_hp
             return True
         return False
@@ -62,6 +65,7 @@ class Hero:
             return True
         else:
             return False
+
     def add_item(self, item, product):
         if "strength" in product:
             self.strength += product["strength"]

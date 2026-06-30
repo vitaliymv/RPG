@@ -1,3 +1,4 @@
+import random
 import streamlit as st
 import json
 from hero import Hero
@@ -22,7 +23,7 @@ else:
 
     with col2:
         st.subheader("Actions")
-        c1, c2, c3 = st.columns(3)
+        c1, c2, c3, c4 = st.columns(4)
         with c1:
             if st.button("Fight"):
                 monster, dmg, gold, exp = hero.fight()
@@ -42,7 +43,38 @@ else:
                     st.success("Your hp was restored")
                 else:
                     st.error("Not enough a gold")
+        with c4:
+            bosses = [
+                ("Dragon", 400, 450),
+                ("Myth animal", 520, 550),
+                ("Fenrir", 550, 500)
+            ]
+            boss_name, gold_reward, exp_reward = random.choice(bosses)
+            damage = random.randint(
+                20,
+                ((exp_reward // 5) * hero.level) // 2
+            )
 
+            st.markdown(f"**{boss_name}**")
+            st.write(f"Recommended: {((exp_reward // 5) * hero.level) // 2}hp")
+            if st.button("Boss"):
+                damage -= hero.defense
+                hero.hp -= damage
+                rand_gold = 0
+                if hero.hp <= 0:
+                    hero.hp = 1
+                    hero.exp -= exp_reward
+                    st.error(f"You lose: {boss_name}")
+                    st.error(f"You lost: {exp_reward}")
+                else:
+                    rand_gold = random.randint(gold_reward, gold_reward * hero.level)
+                    hero.gold += rand_gold
+                    hero.exp += exp_reward
+                    st.success(f"You won the {boss_name}")
+                    st.warning(f"You lost {damage} hp")
+                    st.success(f"You got {rand_gold} gold")
+                    st.info(f"You got {exp_reward} exp")
+                hero.check_level()
         st.divider()
         shop = {
             "Wood sword (+1 strength) 50gold": {
@@ -96,6 +128,7 @@ else:
         st.progress(hero.hp / hero.max_hp)
         st.write(f"Level: {hero.level}")
         st.write(f"Experience: {hero.exp}")
+        st.progress(max(0, hero.exp) / (hero.level * 100))
         st.write(f"Gold: {hero.gold}")
         st.write(f"Strength: {hero.strength}")
         st.write(f"Defense: {hero.defense}")
