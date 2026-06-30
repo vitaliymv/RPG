@@ -55,9 +55,13 @@ class Hero:
         return False
 
     def train(self):
-        self.strength += 1
-        self.defense += 1
-
+        if self.gold >= 90:
+            self.gold -= 90
+            self.strength += 1
+            self.defense += 1
+            return True
+        else:
+            return False
     def add_item(self, item, product):
         if "strength" in product:
             self.strength += product["strength"]

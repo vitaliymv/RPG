@@ -32,8 +32,10 @@ else:
                 st.info(f"You got {exp} exp")
         with c2:
             if st.button("Train"):
-                hero.train()
-                st.success("Strength and defense is increased")
+                if hero.train():
+                    st.success("Strength and defense is increased")
+                else:
+                    st.error("Not enough gold")
         with c3:
             if st.button("Heal"):
                 if hero.heal():
