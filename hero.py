@@ -58,11 +58,12 @@ class Hero:
         self.strength += 1
         self.defense += 1
 
-    def cast_spell(self):
-        damage = random.randint(10, 40)
-        return damage
+    def add_item(self, item, product):
+        if "strength" in product:
+            self.strength += product["strength"]
+        if "defense" in product:
+            self.defense += product["defense"]
 
-    def add_item(self, item):
         self.inventory.append(item)
 
     def to_dict(self):

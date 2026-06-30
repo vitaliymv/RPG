@@ -19,17 +19,7 @@ if st.session_state.hero is None:
 else:
     hero = st.session_state.hero
     col1, col2 = st.columns([1, 2])
-    with col1:
-        st.subheader("Hero")
-        st.write(f"Name: {hero.name}")
-        st.write(f"Hero class: {hero.hero_class}")
-        st.write(f"HP: {hero.hp} / {hero.max_hp}")
-        st.progress(hero.hp / hero.max_hp)
-        st.write(f"Level: {hero.level}")
-        st.write(f"Experience: {hero.exp}")
-        st.write(f"Gold: {hero.gold}")
-        st.write(f"Strength: {hero.strength}")
-        st.write(f"Defense: {hero.defense}")
+
     with col2:
         st.subheader("Actions")
         c1, c2, c3 = st.columns(3)
@@ -40,7 +30,6 @@ else:
                 st.warning(f"You lost {dmg} hp")
                 st.success(f"You got {gold} gold")
                 st.info(f"You got {exp} exp")
-                # st.rerun()
         with c2:
             if st.button("Train"):
                 hero.train()
@@ -51,13 +40,35 @@ else:
                     st.success("Your hp was restored")
                 else:
                     st.error("Not enough a gold")
+
         st.divider()
-        st.subheader("Magic")
-        if st.button("Throw spell"):
-            dmg = hero.cast_spell()
-            st.success(f"Damage is increased: {dmg}")
+        shop = {
+            "Wood sword (+1 strength) 50gold": {
+                "price": 50,
+                "strength": 1
+            },
+            "Iron shield (+1 defense) 50gold": {
+                "price": 50,
+                "defense": 1
+            }
+        }
+        item = st.selectbox("Choose item", list(shop.keys()))
+        if st.button("Buy item"):
+            product = shop[item]
+            if hero.gold >= product["price"]:
+                hero.add_item(item, product)
+                hero.gold -= product["price"]
+                st.success(f"You bought: {item}")
+            else:
+                st.error("Not enough gold")
         st.divider()
 
+        st.subheader("Inventory")
+        if len(hero.inventory) == 0:
+            st.write("Empty")
+        else:
+            for item in hero.inventory:
+                st.write("*", item)
         st.divider()
         c1, c2 = st.columns(2)
         with c1:
@@ -75,4 +86,14 @@ else:
                         st.rerun()
                 except:
                     st.error("File not found")
-
+    with col1:
+        st.subheader("Hero")
+        st.write(f"Name: {hero.name}")
+        st.write(f"Hero class: {hero.hero_class}")
+        st.write(f"HP: {hero.hp} / {hero.max_hp}")
+        st.progress(hero.hp / hero.max_hp)
+        st.write(f"Level: {hero.level}")
+        st.write(f"Experience: {hero.exp}")
+        st.write(f"Gold: {hero.gold}")
+        st.write(f"Strength: {hero.strength}")
+        st.write(f"Defense: {hero.defense}")
